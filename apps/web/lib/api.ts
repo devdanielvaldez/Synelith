@@ -1,6 +1,8 @@
 import type {
   LiteratureSearchResponse,
+  Paper,
   Project,
+  PubMedImportResponse,
   ResearchRun,
 } from "@neurogenesis/contracts";
 
@@ -32,6 +34,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export function searchLiterature(query: string): Promise<LiteratureSearchResponse> {
   const parameters = new URLSearchParams({ q: query, limit: "6" });
   return request<LiteratureSearchResponse>(`/v1/literature/search?${parameters}`);
+}
+
+export function importLiterature(query: string): Promise<PubMedImportResponse> {
+  return request<PubMedImportResponse>("/v1/papers/import/pubmed", {
+    method: "POST",
+    body: JSON.stringify({ query, limit: 6 }),
+  });
+}
+
+export function listPapers(): Promise<Paper[]> {
+  return request<Paper[]>("/v1/papers");
 }
 
 export function createProject(): Promise<Project> {

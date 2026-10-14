@@ -1,19 +1,24 @@
 "use client";
 
-import type { LiteratureSearchResponse, Project, ResearchRun } from "@neurogenesis/contracts";
-import { FormEvent, useState } from "react";
+import type {
+  LiteratureSearchResponse,
+  Project,
+  PubMedImportResponse,
+  ResearchRun,
+} from "@neurogenesis/contracts";
+import { FormEvent, useEffect, useState } from "react";
 
-import { createProject, createResearchRun, searchLiterature } from "../lib/api";
+import {
+  createProject,
+  createResearchRun,
+  importLiterature,
+  listPapers,
+  searchLiterature,
+} from "../lib/api";
 import { BookIcon, FlaskIcon, GraphIcon, MarkIcon, SearchIcon } from "./icons";
 
 const DEFAULT_QUESTION =
   "How do APOE-associated lipid states relate to microglial activation in Alzheimer's disease?";
-
-const activity = [
-  { code: "SRC", label: "Seed corpus", value: "24", detail: "curated records · demo" },
-  { code: "CLM", label: "Evidence claims", value: "—", detail: "awaiting extraction" },
-  { code: "RUN", label: "Active runs", value: "0", detail: "no execution started" },
-];
 
 export function ResearchWorkspace() {
   const [question, setQuestion] = useState(DEFAULT_QUESTION);
@@ -21,8 +26,16 @@ export function ResearchWorkspace() {
   const [run, setRun] = useState<ResearchRun | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [search, setSearch] = useState<LiteratureSearchResponse | null>(null);
-  const [busy, setBusy] = useState<"plan" | "search" | null>(null);
+  const [importResult, setImportResult] = useState<PubMedImportResponse | null>(null);
+  const [libraryCount, setLibraryCount] = useState(0);
+  const [busy, setBusy] = useState<"plan" | "search" | "import" | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    void listPapers()
+      .then((papers) => setLibraryCount(papers.length))
+      .catch(() => undefined);
+  }, []);
 
   async function planRun() {
     setBusy("plan");
@@ -44,12 +57,38 @@ export function ResearchWorkspace() {
     setError(null);
     try {
       setSearch(await searchLiterature(query));
+      setImportResult(null);
     } catch {
       setError("PubMed metadata could not be retrieved. No result was recorded as complete.");
     } finally {
       setBusy(null);
     }
   }
+
+  async function importSearch() {
+    setBusy("import");
+    setError(null);
+    try {
+      const result = await importLiterature(query);
+      setImportResult(result);
+      setLibraryCount(result.library_total);
+    } catch {
+      setError("The metadata was not imported because PubMed did not return a complete result.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const activity = [
+    {
+      code: "SRC",
+      label: "Paper library",
+      value: String(libraryCount),
+      detail: libraryCount ? "persistent metadata records" : "no imported records",
+    },
+    { code: "CLM", label: "Evidence claims", value: "—", detail: "awaiting extraction" },
+    { code: "RUN", label: "Active runs", value: run ? "1" : "0", detail: "planning stage only" },
+  ];
 
   return (
     <div className="app-shell">
@@ -190,6 +229,20 @@ export function ResearchWorkspace() {
                   <span className="access-badge">metadata only</span>
                 </article>
               ))}
+              <div className="import-bar">
+                <div>
+                  <strong>Save this metadata snapshot</strong>
+                  <span>Records remain unreviewed and are not evidence claims.</span>
+                </div>
+                <button disabled={busy !== null} onClick={importSearch} type="button">
+                  {busy === "import" ? "Importing…" : "Import to library"}
+                </button>
+              </div>
+              {importResult ? (
+                <div className="notice success" role="status">
+                  {importResult.created} new · {importResult.existing} already stored · {importResult.library_total} total
+                </div>
+              ) : null}
               <p className="provenance">Source hash: {search.provenance.source_hash.slice(0, 28)}… · External metadata is treated as untrusted input.</p>
             </div>
           ) : (
