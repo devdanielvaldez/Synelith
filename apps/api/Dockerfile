@@ -5,9 +5,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md alembic.ini ./
 COPY apps/api ./apps/api
 COPY packages/connectors ./packages/connectors
+COPY infrastructure/migrations ./infrastructure/migrations
 RUN pip install --no-cache-dir .
 
 EXPOSE 8000

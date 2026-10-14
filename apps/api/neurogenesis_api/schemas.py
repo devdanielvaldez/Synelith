@@ -15,6 +15,24 @@ class HealthResponse(BaseModel):
     version: Literal["0.1.0"] = "0.1.0"
 
 
+class ProjectCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=2, max_length=160)
+    disease_area: str = Field(min_length=2, max_length=120)
+    description: str | None = Field(default=None, max_length=4_000)
+
+
+class ProjectResponse(BaseModel):
+    id: UUID
+    name: str
+    disease_area: str
+    description: str | None
+    status: Literal["active"] = "active"
+    created_at: datetime
+    updated_at: datetime
+
+
 class ResearchScope(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -25,7 +43,7 @@ class ResearchScope(BaseModel):
 class ResearchRunRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    project_id: str = Field(min_length=1, max_length=100)
+    project_id: UUID
     question: str = Field(min_length=10, max_length=2_000)
     level: Literal["basic", "intermediate", "advanced", "scientific"] = "scientific"
     scope: ResearchScope = Field(default_factory=ResearchScope)
@@ -48,7 +66,7 @@ class ResearchTask(BaseModel):
 
 class ResearchRunResponse(BaseModel):
     id: UUID
-    project_id: str
+    project_id: UUID
     question: str
     level: Literal["basic", "intermediate", "advanced", "scientific"]
     status: Literal["planned"] = "planned"

@@ -10,15 +10,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from neurogenesis_connectors import PubMedClient, PubMedClientSettings
 
-from neurogenesis_api.routes import health, literature, research_runs
+from neurogenesis_api.database import Database
+from neurogenesis_api.routes import health, literature, projects, research_runs
 from neurogenesis_api.settings import Settings
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, *, database: Database | None = None) -> FastAPI:
     resolved_settings = settings or Settings.from_environment()
+    owns_database = database is None
+    resolved_database = database or Database(resolved_settings.database_url)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        app.state.database = resolved_database
         async with httpx.AsyncClient(
             base_url="https://eutils.ncbi.nlm.nih.gov/entrez/eutils/",
             headers={"User-Agent": "NeuroGenesisAI/0.1 (developers@neurogenesis.ai)"},
@@ -31,6 +35,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 ),
             )
             yield
+        if owns_database:
+            await resolved_database.dispose()
 
     app = FastAPI(
         title="NeuroGenesis AI API",
@@ -47,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.include_router(health.router)
     app.include_router(literature.router)
+    app.include_router(projects.router)
     app.include_router(research_runs.router)
     return app
 

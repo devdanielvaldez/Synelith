@@ -7,11 +7,16 @@ services:
     restart: unless-stopped
     environment:
       API_ENV: ${API_ENV:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://neurogenesis:neurogenesis_dev_pass@postgres:5432/neurogenesis}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001}
       NCBI_API_KEY: ${NCBI_API_KEY:-}
       NCBI_EMAIL: ${NCBI_EMAIL:-developers@neurogenesis.ai}
     ports:
       - "${API_PORT:-8000}:8000"
+    command: ["sh", "-c", "alembic upgrade head && uvicorn neurogenesis_api.main:app --host 0.0.0.0 --port 8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
