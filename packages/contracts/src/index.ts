@@ -58,6 +58,16 @@ export interface PubMedImportResponse {
   disclaimer: string;
 }
 
+export interface AuditEvent {
+  id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  actor_type: string;
+  event_data: Record<string, unknown>;
+  created_at: string;
+}
+
 export interface ResearchRun {
   id: string;
   project_id: string;

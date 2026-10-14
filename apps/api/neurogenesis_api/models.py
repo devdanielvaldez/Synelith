@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import UUID, uuid4
 
@@ -12,6 +12,10 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class Base(DeclarativeBase):
     pass
+
+
+def utc_now() -> datetime:
+    return datetime.now(timezone.utc)  # noqa: UP017 - local Python 3.9 validation
 
 
 class TimestampMixin:
@@ -98,5 +102,5 @@ class AuditEvent(Base):
     actor_type: Mapped[str] = mapped_column(String(50), default="system", nullable=False)
     event_data: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
+        DateTime(timezone=True), default=utc_now, server_default=func.now(), nullable=False
     )

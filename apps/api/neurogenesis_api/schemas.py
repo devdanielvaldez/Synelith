@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Literal
+from typing import Any, Literal
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -109,6 +109,16 @@ class PubMedImportResponse(BaseModel):
     complete: Literal[True] = True
     papers: tuple[PaperResponse, ...]
     disclaimer: str = "Imported records contain bibliographic metadata only and have not been reviewed as evidence."
+
+
+class AuditEventResponse(BaseModel):
+    id: UUID
+    action: str
+    entity_type: str
+    entity_id: UUID
+    actor_type: str
+    event_data: dict[str, Any]
+    created_at: datetime
 
 
 def plan_research_run(request: ResearchRunRequest) -> ResearchRunResponse:
