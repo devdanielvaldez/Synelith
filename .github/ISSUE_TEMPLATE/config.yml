@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security Vulnerability Disclosure
-    url: mailto:security@neurogenesis.ai
+    url: mailto:hello@daniel-valdez.com
     about: Privately report security flaws, prompt injection vectors, or data exposure.
   - name: Community Discussions
     url: https://github.com/Synelith/neurogenesis/discussions
