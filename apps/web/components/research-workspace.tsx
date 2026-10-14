@@ -1,9 +1,9 @@
 "use client";
 
-import type { LiteratureSearchResponse, ResearchRun } from "@neurogenesis/contracts";
+import type { LiteratureSearchResponse, Project, ResearchRun } from "@neurogenesis/contracts";
 import { FormEvent, useState } from "react";
 
-import { createResearchRun, searchLiterature } from "../lib/api";
+import { createProject, createResearchRun, searchLiterature } from "../lib/api";
 import { BookIcon, FlaskIcon, GraphIcon, MarkIcon, SearchIcon } from "./icons";
 
 const DEFAULT_QUESTION =
@@ -19,6 +19,7 @@ export function ResearchWorkspace() {
   const [question, setQuestion] = useState(DEFAULT_QUESTION);
   const [query, setQuery] = useState("APOE microglia Alzheimer's disease");
   const [run, setRun] = useState<ResearchRun | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [search, setSearch] = useState<LiteratureSearchResponse | null>(null);
   const [busy, setBusy] = useState<"plan" | "search" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,9 @@ export function ResearchWorkspace() {
     setBusy("plan");
     setError(null);
     try {
-      setRun(await createResearchRun(question));
+      const activeProject = project ?? (await createProject());
+      setProject(activeProject);
+      setRun(await createResearchRun(activeProject.id, question));
     } catch {
       setError("The API is unavailable. Start the local API and try again.");
     } finally {
@@ -73,7 +76,9 @@ export function ResearchWorkspace() {
       <main id="workspace" className="workspace">
         <header className="topbar">
           <div>
-            <span className="eyebrow">Project / Alzheimer — General</span>
+            <span className="eyebrow">
+              Project / Alzheimer — General{project ? ` / ${project.id.slice(0, 8)}` : ""}
+            </span>
             <h1>Research workspace</h1>
           </div>
           <div className="status-pill"><span /> API-backed prototype</div>

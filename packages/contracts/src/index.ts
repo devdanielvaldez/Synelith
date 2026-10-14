@@ -49,3 +49,13 @@ export interface ResearchRun {
   }>;
   disclaimer: string;
 }
+
+export interface Project {
+  id: string;
+  name: string;
+  disease_area: string;
+  description: string | null;
+  status: "active";
+  created_at: string;
+  updated_at: string;
+}
