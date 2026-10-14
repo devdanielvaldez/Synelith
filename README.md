@@ -1,4 +1,4 @@
-# NeuroGenesis AI
+# Synelith
 ## Autonomous and Assisted Research Platform for Alzheimer's Disease
 
 **Version:** 0.1 — research and development specification  
