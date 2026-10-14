@@ -1,0 +1,17 @@
+{
+  "name": "neurogenesis",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "pnpm --filter @neurogenesis/web dev",
+    "build": "pnpm --filter @neurogenesis/web build",
+    "lint": "pnpm --filter @neurogenesis/web lint",
+    "typecheck": "pnpm --filter @neurogenesis/web typecheck",
+    "test": "pnpm --filter @neurogenesis/web test"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}
