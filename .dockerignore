@@ -1,0 +1,12 @@
+.git
+.github
+.next
+.venv
+__pycache__
+node_modules
+*.log
+.env
+data/minio
+data/postgres
+experiments/**/artifacts
+experiments/**/logs

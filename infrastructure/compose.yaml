@@ -1,4 +1,40 @@
 services:
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    container_name: neurogenesis-api
+    restart: unless-stopped
+    environment:
+      API_ENV: ${API_ENV:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3001}
+      NCBI_API_KEY: ${NCBI_API_KEY:-}
+      NCBI_EMAIL: ${NCBI_EMAIL:-developers@neurogenesis.ai}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    container_name: neurogenesis-web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      PORT: 3001
+    ports:
+      - "${FRONTEND_PORT:-3001}:3001"
+    depends_on:
+      api:
+        condition: service_healthy
+
   postgres:
     image: pgvector/pgvector:pg16
     container_name: neurogenesis-postgres
