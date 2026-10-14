@@ -34,6 +34,30 @@ export interface LiteratureSearchResponse {
   provenance: RetrievalProvenance;
 }
 
+export interface Paper {
+  id: string;
+  title: string;
+  doi: string | null;
+  pmid: string | null;
+  publication_date: string | null;
+  review_status: "unreviewed";
+  source_id: string;
+  source_access: "metadata_only";
+  source_hash: string;
+  created_at: string;
+}
+
+export interface PubMedImportResponse {
+  query: string;
+  retrieved: number;
+  created: number;
+  existing: number;
+  library_total: number;
+  complete: true;
+  papers: Paper[];
+  disclaimer: string;
+}
+
 export interface ResearchRun {
   id: string;
   project_id: string;

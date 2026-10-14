@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from neurogenesis_connectors import PubMedClient, PubMedClientSettings
 
 from neurogenesis_api.database import Database
-from neurogenesis_api.routes import health, literature, projects, research_runs
+from neurogenesis_api.routes import health, literature, papers, projects, research_runs
 from neurogenesis_api.settings import Settings
 
 
@@ -53,6 +53,7 @@ def create_app(settings: Settings | None = None, *, database: Database | None = 
     )
     app.include_router(health.router)
     app.include_router(literature.router)
+    app.include_router(papers.router)
     app.include_router(projects.router)
     app.include_router(research_runs.router)
     return app

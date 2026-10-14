@@ -75,6 +75,42 @@ class ResearchRunResponse(BaseModel):
     disclaimer: str
 
 
+class PubMedImportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    query: str = Field(min_length=2, max_length=500)
+    limit: int = Field(default=10, ge=1, le=100)
+
+    @field_validator("query")
+    @classmethod
+    def normalize_query(cls, value: str) -> str:
+        return " ".join(value.split())
+
+
+class PaperResponse(BaseModel):
+    id: UUID
+    title: str
+    doi: str | None
+    pmid: str | None
+    publication_date: str | None
+    review_status: Literal["unreviewed"] = "unreviewed"
+    source_id: UUID
+    source_access: Literal["metadata_only"] = "metadata_only"
+    source_hash: str
+    created_at: datetime
+
+
+class PubMedImportResponse(BaseModel):
+    query: str
+    retrieved: int
+    created: int
+    existing: int
+    library_total: int
+    complete: Literal[True] = True
+    papers: tuple[PaperResponse, ...]
+    disclaimer: str = "Imported records contain bibliographic metadata only and have not been reviewed as evidence."
+
+
 def plan_research_run(request: ResearchRunRequest) -> ResearchRunResponse:
     tasks = [
         ResearchTask(
