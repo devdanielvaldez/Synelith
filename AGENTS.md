@@ -34,7 +34,7 @@ Keep boundaries explicit and extract services only after measured scaling or own
 - Flag claims and downstream graph edges when their source is retracted, corrected, or subject to an expression of concern.
 - Treat LLM confidence as uninformative unless supported by evaluated calibration and external evidence.
 
-Use the repository skill `biomedical-evidence-curation` for literature synthesis, claim extraction, or knowledge-graph evidence work.
+Use the repository skill `biomedical-evidence-curation` in `.agents/skills/` for literature synthesis, claim extraction, or knowledge-graph evidence work.
 
 ## Reproducibility and evaluation
 
@@ -42,7 +42,7 @@ Every computational run must record code revision or source hash, parameters, ra
 
 Use independent cohorts or holdouts where the scientific question permits. Include negative controls, sensitivity analysis, multiple-testing correction, uncertainty, and limitations appropriate to the method. Do not tune on the final test set.
 
-Use the repository skill `reproducible-biomedical-experiments` when planning, implementing, executing, or auditing scientific experiments.
+Use the repository skill `reproducible-biomedical-experiments` in `.agents/skills/` when planning, implementing, executing, or auditing scientific experiments.
 
 ## Data, licensing, safety, and security
 
@@ -55,7 +55,7 @@ Use the repository skill `reproducible-biomedical-experiments` when planning, im
 - Never automate patient diagnosis, treatment recommendations, biological-material procurement, or physical synthesis.
 - Do not commit secrets, credentials, large omics files, model weights, local databases, or experiment artifacts excluded by `.gitignore`.
 
-Use the repository skill `scientific-connector-development` for external biomedical API and dataset integrations.
+Use the repository skill `scientific-connector-development` in `.agents/skills/` for external biomedical API and dataset integrations.
 
 ## Engineering conventions
 
