@@ -1,4 +1,5 @@
 import type {
+  AuditEvent,
   LiteratureSearchResponse,
   Paper,
   Project,
@@ -45,6 +46,11 @@ export function importLiterature(query: string): Promise<PubMedImportResponse> {
 
 export function listPapers(): Promise<Paper[]> {
   return request<Paper[]>("/v1/papers");
+}
+
+export function listAuditEvents(limit = 12): Promise<AuditEvent[]> {
+  const parameters = new URLSearchParams({ limit: String(limit) });
+  return request<AuditEvent[]>(`/v1/audit/events?${parameters}`);
 }
 
 export function createProject(): Promise<Project> {

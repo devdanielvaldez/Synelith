@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  AuditEvent,
   LiteratureSearchResponse,
   Project,
   PubMedImportResponse,
@@ -12,6 +13,7 @@ import {
   createProject,
   createResearchRun,
   importLiterature,
+  listAuditEvents,
   listPapers,
   searchLiterature,
 } from "../lib/api";
@@ -28,12 +30,16 @@ export function ResearchWorkspace() {
   const [search, setSearch] = useState<LiteratureSearchResponse | null>(null);
   const [importResult, setImportResult] = useState<PubMedImportResponse | null>(null);
   const [libraryCount, setLibraryCount] = useState(0);
+  const [auditEvents, setAuditEvents] = useState<AuditEvent[]>([]);
   const [busy, setBusy] = useState<"plan" | "search" | "import" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void listPapers()
-      .then((papers) => setLibraryCount(papers.length))
+    void Promise.all([listPapers(), listAuditEvents()])
+      .then(([papers, events]) => {
+        setLibraryCount(papers.length);
+        setAuditEvents(events);
+      })
       .catch(() => undefined);
   }, []);
 
@@ -44,6 +50,7 @@ export function ResearchWorkspace() {
       const activeProject = project ?? (await createProject());
       setProject(activeProject);
       setRun(await createResearchRun(activeProject.id, question));
+      setAuditEvents(await listAuditEvents());
     } catch {
       setError("The API is unavailable. Start the local API and try again.");
     } finally {
@@ -72,6 +79,7 @@ export function ResearchWorkspace() {
       const result = await importLiterature(query);
       setImportResult(result);
       setLibraryCount(result.library_total);
+      setAuditEvents(await listAuditEvents());
     } catch {
       setError("The metadata was not imported because PubMed did not return a complete result.");
     } finally {
@@ -101,6 +109,7 @@ export function ResearchWorkspace() {
         <nav aria-label="Primary navigation" className="nav-list">
           <a className="nav-item active" href="#workspace"><span>⌁</span>Workspace</a>
           <a className="nav-item" href="#literature"><BookIcon />Literature</a>
+          <a className="nav-item" href="#audit"><span>✓</span>Audit ledger</a>
           <a className="nav-item" href="#graph"><GraphIcon />Knowledge graph</a>
           <a className="nav-item" href="#experiments"><FlaskIcon />Experiments</a>
         </nav>
@@ -252,6 +261,35 @@ export function ResearchWorkspace() {
               <span>No evidence claims have been extracted.</span>
             </div>
           )}
+        </section>
+
+        <section id="audit" className="audit-panel">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">Append-only activity</span>
+              <h2>Audit ledger</h2>
+            </div>
+            <span className="step-label">{auditEvents.length} / LATEST</span>
+          </div>
+          {auditEvents.length ? (
+            <div className="audit-list" aria-live="polite">
+              {auditEvents.map((event) => (
+                <article className="audit-event" key={event.id}>
+                  <span className="audit-mark" aria-hidden="true">✓</span>
+                  <div>
+                    <strong>{event.action.replace(".", " / ").replaceAll("_", " ")}</strong>
+                    <p>{event.entity_type} · {event.entity_id.slice(0, 8)} · actor {event.actor_type}</p>
+                  </div>
+                  <time dateTime={event.created_at}>
+                    {new Date(event.created_at).toLocaleString()}
+                  </time>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="audit-empty">No persisted activity yet.</div>
+          )}
+          <p className="disclaimer">Events are immutable activity records, not scientific evidence or validation.</p>
         </section>
 
         <footer>
