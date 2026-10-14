@@ -1,0 +1,51 @@
+name: "Bug Report"
+description: "Report a bug, pipeline failure, or unexpected behavior in NeuroGenesis AI."
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please ensure this report does not contain sensitive credentials, API keys, or private patient data.
+  - type: input
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which part of the platform is affected? (e.g., apps/api, packages/connectors, Mol* viewer, Graph Curator)
+      placeholder: "e.g., packages/connectors/pubmed"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Exact steps to reproduce the behavior.
+      placeholder: |
+        1. Query PubMed connector with term '...'
+        2. Inspect extracted evidence claim
+        3. Observe KeyError on locator offset
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Execution Logs / Tracebacks
+      description: Paste relevant terminal logs, stack traces, or browser console errors.
+      render: shell
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Execution Environment
+      options:
+        - Docker Compose (local)
+        - Local Native (Python + Node.js)
+        - CI / GitHub Actions
+        - Kubernetes / Cloud
+    validations:
+      required: true

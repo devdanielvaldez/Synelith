@@ -1,0 +1,29 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate-pr-title:
+    name: Validate Conventional Commit PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify PR Title Syntax
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            bio
+            hyp
+            perf
+            refactor
+            test
+            docs
+            ci
+            chore
+            infra
+          requireScope: false

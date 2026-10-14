@@ -1,0 +1,36 @@
+name: "Scientific Hypothesis or Benchmark Proposal"
+description: "Propose an experimental benchmark, validation cohort, or hypothesis evaluation framework."
+labels: ["scientific-evaluation", "research"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose validation benchmarks (e.g., extensions to EXP-AD-001/002), curated evaluation datasets, or hypothesis scoring heuristics.
+  - type: input
+    id: benchmark-id
+    attributes:
+      label: Benchmark Identifier
+      placeholder: "e.g., EXP-AD-006 / BENCH-MICROGLIA-01"
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis-question
+    attributes:
+      label: Targeted Research Question
+      description: The exact biological question, target phenotypes, and scope.
+    validations:
+      required: true
+  - type: textarea
+    id: ground-truth-data
+    attributes:
+      label: Ground Truth Dataset & Sources
+      description: Specify open-access datasets, DOIs, accession numbers (e.g., GEO, Synapse, UniProt).
+    validations:
+      required: true
+  - type: textarea
+    id: validation-protocol
+    attributes:
+      label: Proposed Evaluation Methodology & Metrics
+      description: Describe statistical baselines, temporal cutoffs, metrics (Recall@K, FDR, calibration), and negative controls.
+    validations:
+      required: true

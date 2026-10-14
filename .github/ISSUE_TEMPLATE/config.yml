@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability Disclosure
+    url: mailto:security@neurogenesis.ai
+    about: Privately report security flaws, prompt injection vectors, or data exposure.
+  - name: Community Discussions
+    url: https://github.com/Synelith/neurogenesis/discussions
+    about: General questions, scientific brainstorms, and community discussions.

@@ -1,0 +1,40 @@
+name: "Feature Request"
+description: "Propose a new feature, bioinformatic tool integration, or architectural enhancement."
+labels: ["enhancement", "discussion"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement / Research Bottleneck
+      description: What challenge or research friction does this feature solve?
+      placeholder: "As a neurodegeneration researcher, I need to..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution & Technical Approach
+      description: Describe the proposed implementation, components modified, and APIs utilized.
+    validations:
+      required: true
+  - type: textarea
+    id: scientific-impact
+    attributes:
+      label: Scientific Value & Validation Plan
+      description: How will the scientific validity of this feature be verified against ground truth?
+    validations:
+      required: false
+  - type: dropdown
+    id: target-layer
+    attributes:
+      label: Target Architecture Layer
+      options:
+        - Frontend Workspace (apps/web)
+        - API & Gateway (apps/api)
+        - Connectors & Data Ingestion (packages/connectors)
+        - Scientific Core & Graph (packages/scientific-core)
+        - Hypothesis Engine (packages/hypotheses)
+        - 3D / Genomic Visualization (packages/visualization)
+        - Infrastructure & Workers (infrastructure / workers)
+    validations:
+      required: true
